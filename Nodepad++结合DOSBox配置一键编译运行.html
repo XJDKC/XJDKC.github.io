@@ -103,7 +103,7 @@
 <meta property="og:image" content="https://xjdkc.github.io/photo/notepad_run.jpg">
 <meta property="og:image" content="https://xjdkc.github.io/photo/notepad_exe.jpg">
 <meta property="og:image" content="https://xjdkc.github.io/photo/td_demo_exe.jpg">
-<meta property="og:updated_time" content="2018-03-27T10:15:06.727Z">
+<meta property="og:updated_time" content="2018-03-27T10:20:06.868Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nodepad++结合DOSBox配置一键编译运行">
 <meta name="twitter:description" content="前言　　最近在学习汇编语言程序设计，在最开始肯定是要配置环境啦，但是我们学的还只是8086系列的处理器的汇编，而现在的CPU是酷睿系列了，根本不支持，所以就需要用到DOSBox来模拟环境，然而这就遇到一个问题了：DOSBox编译链接运行程序十分麻烦，而且每次重新打开都需要输入一大堆东西，很是浪费时间，那么如何简单快捷的实现像写C,C++时那样一个快捷键源代码就自动编译运行了呢？于是就有了这篇博文。">
@@ -467,9 +467,7 @@
 
       
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>　　最近在学习汇编语言程序设计，在最开始肯定是要配置环境啦，但是我们学的还只是8086系列的处理器的汇编，而现在的CPU是酷睿系列了，根本不支持，所以就需要用到DOSBox来模拟环境，然而这就遇到一个问题了：DOSBox编译链接运行程序十分麻烦，而且每次重新打开都需要输入一大堆东西，很是浪费时间，那么如何简单快捷的实现像写C,C++时那样一个快捷键源代码就自动编译运行了呢？于是就有了这篇博文。</p>
-<h2 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a>配置环境</h2><p>　　首先介绍一下实现环境：<br>　　　　<em> DOSBox 0.74 模拟DOS系统
-　　　　</em> Notepad++ v7.5.6 (64 bit) 用于编辑汇编源程序<br>　　　　<em> MASM 5.0 汇编程序编译器
-　　　　</em> LINK 连接程序<br>　　　　* TD Turbor Debugger 调试器<br>　　这些软件需要自己下好并安装在对应位置，其中MASM LINK TD需要英文路径。</p>
+<h2 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a>配置环境</h2><p>　　首先介绍一下实现环境：<br>　　　　- DOSBox 0.74 模拟DOS系统<br>　　　　- Notepad++ v7.5.6 (64 bit) 用于编辑汇编源程序<br>　　　　- MASM 5.0 汇编程序编译器<br>　　　　- LINK 连接程序<br>　　　　- TD Turbor Debugger 调试器<br>　　这些软件需要自己下好并安装在对应位置，其中MASM LINK TD需要英文路径。</p>
 <a id="more"></a>
 <h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><p>　　实现的大致思路就是通过Notepad++运用批处理指令打开DOSBox 并在其中输入相关指令使源代码编译链接运行，实现编译运行调试的快捷指令需要三步</p>
 <h3 id="修改DOSBox配置文件"><a href="#修改DOSBox配置文件" class="headerlink" title="修改DOSBox配置文件"></a>修改DOSBox配置文件</h3><p>首先打开以下路径：</p>
