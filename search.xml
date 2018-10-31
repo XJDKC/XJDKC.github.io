@@ -1,35 +1,344 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title><![CDATA[Nodepad++结合DOSBox配置一键编译运行]]></title>
-    <url>%2FNodepad%2B%2B%E7%BB%93%E5%90%88DOSBox%E9%85%8D%E7%BD%AE%E4%B8%80%E9%94%AE%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C.html</url>
-    <content type="text"><![CDATA[前言 最近在学习汇编语言程序设计，在最开始肯定是要配置环境啦，但是我们学的还只是8086系列的处理器的汇编，而现在的CPU是酷睿系列了，根本不支持，所以就需要用到DOSBox来模拟环境，然而这就遇到一个问题了：DOSBox编译链接运行程序十分麻烦，而且每次重新打开都需要输入一大堆东西，很是浪费时间，那么如何简单快捷的实现像写C,C++时那样一个快捷键源代码就自动编译运行了呢？于是就有了这篇博文。 配置环境 首先介绍一下实现环境： - DOSBox 0.74 模拟DOS系统 - Notepad++ v7.5.6 (64 bit) 用于编辑汇编源程序 - MASM 5.0 汇编程序编译器 - LINK 连接程序 - TD Turbor Debugger 调试器 这些软件需要自己下好并安装在对应位置，其中MASM LINK TD需要英文路径。 具体实现 实现的大致思路就是通过Notepad++运用批处理指令打开DOSBox 并在其中输入相关指令使源代码编译链接运行，实现编译运行调试的快捷指令需要三步 修改DOSBox配置文件首先打开以下路径： C:\Users\Mr. Xing\AppData\Local\DOSBox 然后就会在其中看到DOSBox的配置文件 dosbox-0.74.conf 用记事本打开在最下方的autoexec下输入MASM,LINK,TD的存放目录即 mount c d:\program\asmc: 然后在保存关闭,这样在运行DOSBox的时候就会首先执行这两行而不用重新输入。两行指令意思是 将d:\program\asm挂载为DOSBox下的c盘 进入c盘 配置编译运行修改完DOSBox的配置文件，接下来就需要配置编译运行快捷键了。首先打开Notepad++ 输入一段测试汇编源程序，例如：12345678910111213141516171819202122.386;----------------------------STACK SEGMENT STACK use16 DB 200 DUP(0)STACK ENDS;----------------------------DATA SEGMENT use16MSG DB &apos;How are you! $&apos;DATA ENDS;------------------------------CODE SEGMENT use16 ASSUME CS:CODE,DS:DATA,SS:STACKBEGIN: MOV AX, DATA MOV DS, AX MOV DX, OFFSET MSG MOV AH, 9 INT 21H MOV AH,4CH ;exit INT 21H;-----------------------------CODE ENDS END BEGIN 然后点击菜单项的运行，如下图: 然后输入以下命令 D:\软件\DOSBox\DOSBox-0.74\DOSBOX.exe -c &quot;@echo off&quot; -c &quot;mount d $(CURRENT_DIRECTORY)&quot; -c &quot;MASM d:\$(NAME_PART).asm;&quot; -c &quot;LINK $(NAME_PART).obj;&quot; -c &quot;COPY $(NAME_PART).exe d:\$(NAME_PART).exe&quot; -c cls -c &quot;d:\$(NAME_PART).exe&quot; -c echo. -c pause -c exit 这段指令的意思如下: D:\软件\DOSBox\DOSBox-0.74\DOSBOX.exe DOSBox 软件运行程序文件地址 -c DOSBox command 命令 后跟一条指令且每条指令之前都要加-c @echo off 批处理指令 意思是关闭回显(这样在输入每条指令的时候就不会有c:\之类的) mount d $(CURRENT_DIRECTORY) 将当前汇编源程序挂在到DOSBox的d盘 MASM d:\$(NAME_PART).asm; 编译asm源程序生成二进制目标文件 LINK $(NAME_PART).obj; 链接二进制目标文件生成EXE文件 COPY $(NAME_PART).exe d:\$(NAME_PART).exe 将生成的EXE文件复制到源代码目录下 cls 清屏 d:\$(NAME_PART).exe 运行生成程序 echo. 换行 pause 暂停 exit 退出DOSBox $(FULL_CURRENT_PATH) 当前文件绝对路径 如d:\program\asm\demo.asm $(CURRENT_DIRECTORY) 当前目录 如d:\program\asm $(NAME_PART) 当前文件文件名 如demo $(FILE_NAME) 当前文件全名 如demo.asm $(EXT_PART) 当前文件扩展名如 asm 特别注意:如果你的源代码在E盘,那么请在输入指令的时候将源代码挂载到E盘这段程序只适合于保存到D:盘任何地方的asm文件 然后保存设置响应的名称和快捷键就OK了(我设置的是CTRL+ALT+B)，具体运行效果如下: 配置调试同理只需要在运行框中输入以下批处理指令即可 D:\软件\DOSBox\DOSBox-0.74\DOSBOX.exe -c &quot;mount d $(CURRENT_DIRECTORY)&quot; -c &quot;TD d:\$(NAME_PART).exe&quot; 运行结果如下: 写在最后这次实现一键编译翻了许多文档，发现最全的还是官方文档，学习到了许多关于批处理的知识，收获还是蛮多的。还有就是由于指令长度的限制 在一键编译的时候并没有删除编译得到的obj和exe文件需要清理，有需要的小伙伴可以怎加一条指令del专门清理.obj 和 .exe如果有什么疑惑或者见解欢迎留言。]]></content>
-      <categories>
-        <category>Assembly</category>
-      </categories>
-      <tags>
-        <tag>汇编assembly</tag>
-        <tag>DOSBox</tag>
-        <tag>Notepad++</tag>
-        <tag>批处理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[盒子与小球]]></title>
-    <url>%2F%E5%B0%8F%E7%90%83%E4%B8%8E%E7%9B%92%E5%AD%90.html</url>
-    <content type="text"><![CDATA[Description of the Problem: 你有K个相同的盒子，N个互不相同的物品。你准备把这N个物品装入K个盒子，每个盒子最少要放入一个物品。问一共会有多少种分配方法。由于方案数很大，只需要输出方案总数除以10000的余数。 INPUT： 第一行有一个正整数 t ，表示数据组数(不多于50)。每组数据仅一行，两个整数， N 和K，其中1≤N ≤ 10^9，K≤min(50,N)。 OUTPUT： 每行输出一个整数，为方案总数除以10000的余数。 Analysis: 这是一个来自于同为HUSTer的高中童鞋的问题,从这个问题描述中,我们可以知道把N个物品放入K个相同的盒子的方法数就是 把N-1个物品放入K-1个盒子的方法数 加上 把N-1个物品放入K个盒子的方法数*K,为什么?我们只要考虑最后一个盒子和最后一个球即可,由于盒子是相同的,那么有两种情况 1.最后一个盒子只有一个球且为第N个球，即前面N-1个球没有填满K个盒子，最后一个球只能放在空盒子里。这种情况方法数就等于把N-1个物品放入K-1个盒子的方法数。 2.前面N-1个球填满的K个盒子，那么最后一个球可以任意放。这种情况方法数就等于 把N-1个物品放入K个盒子的方法数*K。 所以如果用f(N,K)来表示 N个物品K个盒子的方法数，可以得到以下递推式 f(N,K)=f(N-1,K-1)+f(N-1,K)*K;(即第二类斯特林数) 所以现在已经可以用程序通过递推算出结果（递归也可以但要慢一些，即使是记忆化递归）。但问题解决了吗？ 答案是：NO。由于N很大所以要一项一项递推计算f(N,K)肯定会超时应为至少要算N*K次，所以显然要找更快速的算法让时间复杂度降低O(logn*K)。我们这时可以运用矩阵+快速幂的形式来解决这个问题。 首先来解释一下什么是快速幂：举个例子，对于计算q^k，我们其实可以将之看成q^[a(n)*2^n+a(n-1)*2^(n-1)+……a(1)*2^1+a(0)*2^0],其中a(n)=0或1。即把k看成许多{2^m}中某n+1项之和，那么怎么快速计算q^k呢？我们先把q^k看成n+1项之积，然后我们可以对k不断除2取余，如果第i次除2后余数为1，那么表示a(i-1)=1，即有n+1项乘积中有q^(i-1)这一项，具体描述步骤如下 首先我们用让一个数ans=1，用来存答案，用一个数x来存q^(i-1)，x开始为1，然后先对k进行第一次除以2，如果余数为1，证明a(0)=1，有q^0这一项，于是让ans*=x,如果不为1，证明不存在这一项(或者说着这一项为1)，就不用乘，然后进行完上述操作，x*=q; 然后我们对k进行第二次除以2，此时x=q^1，如果余数为1，证明a(1)=1，有q^1这一项，于是让ans*=x,如果不为1，证明不存在这一项(或者说着这一项为1)，就不用乘，然后进行完上述操作，x*=q;所以在对k进行第i次除以2操作时，x=q^(i-1)， 如果余数为1，证明a(i-1)=1，有q^(i-1)这一项，于是让ans*=x,如果不为1，证明不存在这一项(或者说着这一项为1)，就不用乘，然后进行完上述操作，x*=q;最后如果k=0证明已经除完了，ans已经算完那么就得到了结果，结束运算。 现在来分析一下算法效率，若按照原算法计算q^k要乘k次也就是计算k次，用现在的快速幂算法，则要除以[log2(k)]+1次，也就是x要乘[log2(k)]+1次，而如果a(n)均为1，那么要ans也要乘 [log2(k)]+1，所以最多算2{[log2(k)]+1}次算法效率为O(logk)。 现在来讲一讲矩阵乘法： 定义：设A为m×p的矩阵，B为p×n的矩阵，那么称m×n的矩阵C为矩阵A与B的乘积，记作C=A×B 计算方法：乘积C的第m行第n列的元素等于矩阵A的第m行的元素与矩阵B的第n列对应元素乘积之和。 性质：乘法结合律：(AB)C=A(BC) 所以我们可以把原问题的递推式子变成一个矩阵递推式$$\begin{equation}\begin{pmatrix}f(n,k)\\f(n,k-1)\\\vdots\\f(n,2)\\f(n,1)\\\end{pmatrix}={\begin{pmatrix}k&amp;1&amp;0&amp;\cdots&amp;0&amp;0\\0&amp;k-1&amp;1&amp;\cdots&amp;0&amp;0\\\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\0&amp;0&amp;0&amp;\cdots&amp;2&amp;1\\0&amp;0&amp;0&amp;\cdots&amp;0&amp;1\\\end{pmatrix}}{\begin{pmatrix}f(n-1,k)\\f(n-1,k-1)\\\vdots\\f(n-1,2)\\f(n-1,1)\\\end{pmatrix}}\end{equation}$$ 所以可以用矩阵递推式把原递推式变成等比数列形式那么可以得到以下式子$$\begin{equation}\begin{pmatrix}f(n,k)\\f(n,k-1)\\\vdots\\f(n,2)\\f(n,1)\\\end{pmatrix}={\begin{pmatrix}k&amp;1&amp;0&amp;\cdots&amp;0&amp;0\\0&amp;k-1&amp;1&amp;\cdots&amp;0&amp;0\\\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\0&amp;0&amp;0&amp;\cdots&amp;2&amp;1\\0&amp;0&amp;0&amp;\cdots&amp;0&amp;1\\\end{pmatrix}}^{(n-k)}{\begin{pmatrix}f(k,k)\\f(k,k-1)\\\vdots\\f(k,2)\\f(k,1)\\\end{pmatrix}}\end{equation}$$ 然后我们将快速幂与矩阵乘法递推式结合起来，我们只需要先用递推计算出base矩阵，然后用快速幂算出per矩阵的(n-k)次方两者相乘得到ans 其中我们将ans矩阵不再初始化为1，而是初始化为矩阵中的“1”(其他矩阵相乘等于其他)。$${\begin{pmatrix}1&amp;0&amp;0&amp;\cdots&amp;0&amp;0\\0&amp;1&amp;0&amp;\cdots&amp;0&amp;0\\\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\0&amp;0&amp;0&amp;\cdots&amp;1&amp;0\\0&amp;0&amp;0&amp;\cdots&amp;0&amp;1\\\end{pmatrix}}$$ Code:1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677#include&lt;iostream&gt;#include&lt;cstring&gt;using namespace std;const int mod=10000;struct matrix&#123; long long m[66][66];&#125;;matrix per,ans,base,cal,unit; matrix mul(matrix a,matrix b,int x,int y,int z)&#123; matrix c; for (int i=0;i&lt;x;i++) for (int j=0;j&lt;z;j++) &#123; c.m[i][j]=0; for (int k=0;k&lt;y;k++) c.m[i][j]=(c.m[i][j]+a.m[i][k]*b.m[k][j])%mod; c.m[i][j]=c.m[i][j]%mod; &#125; return c;&#125;matrix qpow(int n,int k)&#123; matrix p=per; int ci=n-k; while (ci) &#123; if (ci&amp;1) &#123; unit=mul(unit,p,k,k,k); ci--; &#125; else &#123; p=mul(p,p,k,k,k); ci&gt;&gt;=1; &#125; &#125; return unit;&#125;void init(int k)&#123; for (int i=0;i&lt;50;i++) for (int j=0;j&lt;50;j++) &#123; if (i==j&amp;&amp;i&lt;k) per.m[i][j]=k-i; else if (j-1==i&amp;&amp;j&lt;k) per.m[i][j]=1; else per.m[i][j]=0; if(i==j) unit.m[i][j]=1; else unit.m[i][j]=0; &#125; for (int i=0;i&lt;k;i++) base.m[i][0]=cal.m[k-1][k-1-i];&#125;void calculation()&#123; for (int i=0;i&lt;50;i++) cal.m[i][i]=cal.m[i][0]=1; for(int i=1;i&lt;50;i++) for(int j=1;j&lt;i;j++) cal.m[i][j]=(cal.m[i-1][j]*(j+1)+cal.m[i-1][j-1])%mod;&#125;int main()&#123; int t,n,k; cin&gt;&gt;t; calculation(); while (t--) &#123; cin&gt;&gt;n&gt;&gt;k; init(k); matrix xi=qpow(n,k); ans=mul(xi,base,k,k,1); cout&lt;&lt;ans.m[0][0]&lt;&lt;endl; &#125; return 0;&#125; Addition：下面给出一部分结果 n k 1 2 3 4 5 6 7 8 1 1 2 1 1 3 1 3 1 4 1 7 6 1 5 1 15 25 10 1 6 1 31 90 65 15 1 7 1 63 301 350 140 21 1 8 1 127 966 1701 1050 266 28 1]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>矩阵</tag>
-        <tag>快速幂</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Hello World]]></title>
-    <url>%2Fhello-world.html</url>
-    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
-  </entry>
+<search> 
+  
+    
+    <entry>
+      <title><![CDATA[Stable Matching-稳定匹配问题]]></title>
+      <url>/Stable%20Matching-%E7%A8%B3%E5%AE%9A%E5%8C%B9%E9%85%8D%E9%97%AE%E9%A2%98.html</url>
+      <content type="html"><![CDATA[<h2 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h2><p>　　在求职或者约会的情景中，我们经常会面临双向选择的问题，即一个男生十分喜欢一个女生但女生却不喜欢男生等等情况，在多个求职者和多个应聘者中也会存在这样情节。每个求职者会有自己偏好的公司，每个公司也有自己偏好的求职者，如果每个公司在面试完所有求职者之后按照前3名下发应聘书，由于不同公司可能同时相中同一个应聘者以及应聘者对各个公司的偏好不同，很容易造成应聘失败，这样招聘人数不达标的公司又不得不重新发新的应聘书，而新的应聘书可能导致之前已经答应去某个公司的应聘者取消前往计划，这样无疑会造成一系列混乱的发生，而且也浪费了很多时间。那么如果事先知道每个应聘者、每个公司的偏好的情况下，能否提供一种应聘方式让这种情况不再发生呢？稳定匹配的引入很好解决了这个问题。<br>　　<br><a id="more"></a></p>
+<h2 id="问题抽象"><a href="#问题抽象" class="headerlink" title="问题抽象"></a>问题抽象</h2><p>　　给定两个集合 $M={m_1,m_2,\cdots,m_n}$,$W={w_1,w_2,\cdots,w_n}$<br>　　对这两个集合：每个M中元素对W中所有元素都有一个排名、优先表(无并列)<br>　　　　　　　　　每个W中元素对M中所有元素也有一个排名、优先表(无并列)<br>　　若Ｍ表示n个男生的集合，W表示n个女生的集合，试给出一种分配方式让每个男生和每个女生都能找到<strong>合适</strong>对象(什么分配是合适的?)</p>
+<h2 id="概念定义"><a href="#概念定义" class="headerlink" title="概念定义"></a>概念定义</h2><p>　　为了方便解决问题，我们需要定义如下概念以帮助我们理解、界定问题。<br>　　以下定义中的m,m’表示M中两个不同元素，w,w’表示W中两个不同元素。
+　　</p>
+<ol>
+<li><strong>有序对</strong>：(m,w)</li>
+<li><strong>M×W</strong>：笛卡儿积 表示M中元素与W中元素所有的有序对的集合</li>
+<li><strong>匹配</strong>：S是M×W的子集(有序对的集合)，满足以下条件则称S为对M,W的一个匹配<br> ＋ 每一个M和W中元素至多只出现在S集合的一个有序对中(可能不出现)</li>
+<li><strong>完美匹配</strong>：S’是M×W的子集，满足以下条件则称S’为对M,W的一个完美匹配<ul>
+<li>S’是一个匹配</li>
+<li>S’满足M和W中每一个元素恰好只出现在S’的一个有序对中</li>
+</ul>
+</li>
+<li><strong>不稳定因素</strong>：对于一个完美匹配，若存在两个有序对(m,w),(m’,w’)满足<ul>
+<li>m相较于w更偏爱w’</li>
+<li>w’相较于m’更偏爱m<br>则称有序对(m,w’)为S的一个不稳定因素</li>
+</ul>
+</li>
+<li><strong>稳定匹配</strong>：对于M×W的集合S，当满足以下两个条件的时候则称S是一个稳定匹配<ul>
+<li>S是完美匹配</li>
+<li>S中没有不稳定因素</li>
+</ul>
+</li>
+<li><strong>有效伴侣</strong>：对于一个有序对(m,w)，满足以下条件则称w是m的有效伴侣<ul>
+<li>存在一个稳定匹配，它包含(m,w)有序对</li>
+</ul>
+</li>
+<li><strong>最佳有效伴侣</strong>：对于一个有序对(m,w)，满足以下则成w是m的最佳有效伴侣<ul>
+<li>w是m的有效伴侣</li>
+<li>在所有m的有效伴侣中w在m心中排名最高<br>记作w=best(m)</li>
+</ul>
+</li>
+<li><strong>最差有效伴侣</strong>：对于一个有序对(m,w)，满足以下则成w是m的最差有效伴侣<ul>
+<li>w是m的有效伴侣</li>
+<li>在所有m的有效伴侣中w在m心中排名最低<br>记作w=worst(m)</li>
+</ul>
+</li>
+</ol>
+<h2 id="G-S算法-Gale-Shapley算法"><a href="#G-S算法-Gale-Shapley算法" class="headerlink" title="G-S算法(Gale-Shapley算法)"></a>G-S算法(Gale-Shapley算法)</h2><ol>
+<li><strong>基本思想</strong>：以不断”求婚”的过程来逼近一个稳定匹配的状态</li>
+<li><p><strong>伪代码</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">初始所有的m∈M和w∈W都是自由的</span><br><span class="line">While 存在男人m是自由的且没有对每个女人都求过婚</span><br><span class="line">	选择这样一个男人m</span><br><span class="line">	令w是m的优先表中m还没有求过婚的排名最高的女人</span><br><span class="line">	If    w是自由的    then</span><br><span class="line">		(m,w)变成约会状态</span><br><span class="line">	Else    w当前正在与m&apos;约会</span><br><span class="line">		If    w相较于m更爱m&apos;    then</span><br><span class="line">			m保持自由</span><br><span class="line">		Else    w相较于m&apos;更爱m</span><br><span class="line">			(m,w)变成约会状态</span><br><span class="line">			m&apos;变成自由状态</span><br><span class="line">		Endif</span><br><span class="line">	Endif</span><br><span class="line">Endwhile</span><br><span class="line">输出已约会的集合S.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>G-S算法的一些性质或者特点</strong><br> I. 对于任一W中元素w从第一次被求婚开始一直保持约会状态，且w正在约会的伴侣变得越来越好(按照w的优先表)<br> II. 对于任一M中元素m求过婚的一系列女人会变得越来越差(按照m优先表)<br> III. G-S算法在至多n2次While循环的迭代之后会终止<br> IV. 若m在算法执行的某个时刻是自由的，那么还存在一个w他还没有对其求过婚<br> V. 终止时返回的集合S是一个完美匹配<br> VI. 考虑G-S算法的一次执行，它返回一个对的集合S.集合S是一个稳定匹配<br> VII. G-S算法的每次执行都会得到同一个结合S*<br> VIII. 在稳定匹配S*中每个女人都与他最差的有效伴侣配对</p>
+</li>
+<li><strong>一些想法</strong><ol>
+<li>在看完G-S算法伪代码之后我们必须要解开几个疑惑<br> a. G-S算法会不会无限进行下去，因为每次循环可能使两个人变成约会状态，但是也会使两个人从约会状态中解除，会不会陷入死循环。<br> b. G-S算法得到的集合S是不是一个稳定匹配<br> c. G-S算法每次执行得到的S是不是会不一样<br> d. 如果G-S算法得到的S是一个特定的稳定匹配，那S和众多可能的其他稳定匹配相比有什么特征</li>
+<li>由1的一个疑惑我们可以看出之前的一些G-S特征或者定理的来由<br> a. 如果G-S算法不会无限进行下去，那么肯定存在一个逐渐逼近的过程<br> 1) 所以我们可以分析得到在G-S算法执行的过程中的一些特点即性质1、<br> 2) 我们会发现由于性质1、2的存在，G-S算法的执行不会永远进行下去得到性质3<br> b. 稳定匹配的条件是完美匹配以及不存在不稳定因素<br> 1) 首先证明完美匹配，完美匹配的特点概括来讲就是”不重不漏”<br> 首先说说证明的必要性，因为while循环退出的条件是不存在男人m是自由的且还没对每个女人都求过婚，那么存在几种情况<pre><code>i) 所有男人都是不自由的
+ii) 存在有男人m是不自由的但是已经对于每个女人都求过婚
+</code></pre> 我们首先要做的就是证明S包含了所有男人女人即不漏(即排除第2种情况)，然后讨论不重的问题<pre><code>a) 证明&quot;不漏&quot;：
+我们要排除第2种情况即需要说明男人只要是不自由的那么就还有女人没有被他求过婚即性质4
+假设存在2中情况，那么由性质1可知所有女人都是约会状态，那么正在约会的人就是2n个人，但一共就只有2n个人，说明所有人都在约会，没有人是自由的，说明第2种情况不存在，性质4成立
+b) 证明&quot;不重&quot;
+由与约会都是两两进行，每个人总是同时与一个人约会，所以不会存在有重复现象
+</code></pre> 综合以上，我们发现得到的集合S做到了”不重不漏”,所以它是一个完美匹配即性质5<br> 2) 接下来证明不存在不稳定因素<br> 假设存在一对不稳定因素(m,w’)，即S中存在两对有序对(m,w) (m’,w’)，但是m相比于w更爱w’，w’相比于m’更爱m<br> 考虑G-S的执行过程，对于m的求婚旅程，由于w’优先级更高，所以会先求婚w’，这个时候w’有两种状态，已经约会成功或者处于自由状态<br> a) 对于已经约会成功：假设其在m向w’求婚的时候w’正与m’’约会<br> 此时m向w’求婚会出现两种情况，成功或失败<pre><code>i) 成功：说明m比m&apos;&apos;在w&apos;心中地位高，所以之后不论其他男生怎么向w&apos;求婚，其排位都只会比m在w&apos;心中高，但最终m&apos;在w&apos;心中排位比m低，矛盾。
+ii) 失败：说明m&apos;&apos;比m在w&apos;心中地位高，所以之后不论其他男生怎么向w&apos;求婚，其排位都只会比m&apos;&apos;在w&apos;心中高，但最终排位却是m&apos;&lt;m&lt;m&apos;&apos;，矛盾。
+</code></pre> b) 对于处于自由状态：m直接”牵手成功”，所以之后不论其他男生怎么向w’求婚，其排位都只会比m在w’心中高，但最终m’在w’心中排位比m低，矛盾。<br> 综上，我们可以得出是不可能存在这么一对不稳定因素。<br> S既是完美匹配又没有不稳定因素，所以S为一稳定匹配所以我们可以得到性质6</li>
+<li>在知道G-S算法得到的是一个稳定匹配之后，我们需要考虑的就是是否每次执行都会得到同一个稳定匹配，<br>为什么要思考这样一个问题呢？因为G-S算法其实可以异步实现，现实生活中不就是存在多个男生向多个女生同时求婚的情况吗？那么如果异步实现必定由于每个线程执行情况的不同带来求婚的先后次序不是固定的，所以这样会不会导致最终结果的不同呢？<br>这里不得不佩服前人敏锐的思考了，有效伴侣的提出很好的解决了这样一个问题。<br>考虑证明最终得到的都是S* = {(m,best(m)):m∈M} (这个考虑十分难想得到)<br>有两点值得注意：<ol>
+<li>S*可能不是一个完美匹配，因为有效伴侣是只要有一个稳定匹配存在该有序对就是有效伴侣<br> 但是对于多个男生来说最佳有效伴侣可能是同一个人，所以可能做不到”不重不漏”</li>
+<li>如果这是一个完美匹配，该匹配是十分偏心的，是偏向于男生的<br>证明过程：假设得不到这样一个集合S*而得到一个集合S，即存在一个男生他最终的伴侣不是最佳有效伴侣，也就是说在G-S算法执行过程中，存在至少一次被最佳有效伴侣拒绝的过程，将所有拒绝中第一次拒绝的男生即为m，其最佳有效伴侣为w=best(m)。(由于先后次序关系，男生如果被有效伴侣拒绝会最先被最佳有效伴侣拒绝，所以此次拒绝也是男生被女生所有拒绝中第一次被有效伴侣拒绝),由于最佳有效伴侣在所有有效伴侣中的排名最高，所以m在向有效伴侣求婚时会第一个向w求婚，然而他被拒绝了(不论是约会之后不久还是求婚当时)，即存在一个男生m’比m在w心中排名更高，那么在包含(m,w)有效伴侣的稳定匹配S’中，假设m’与w’≠w配对，回到G-S算法得到的稳定匹配S中。由于w拒绝m是所有对最佳有效伴侣拒绝的第一个，之前还没人被有效伴侣拒绝，m’肯定也没有被有效伴侣拒绝，也就是说w拒绝m可能是因为w正在和m’约会或者m’向w求婚，不管什么情况m’肯定都是先向w求婚然后可能再向w’求婚，不可能先向w’求婚然后拒绝w’再向w求婚，因为(m’,w’)是有效伴侣而之前没有有效伴侣被拒绝。所以在m心中w的排名比w’高，综上可知(m’,w)为稳定匹配S’中一个不稳定因素，矛盾，说明假设不成立，得到性质5。<br> <strong>简单来说就是</strong>：<br> 假设G-S没有得到S*得到了S → 存在一个男生伴侣不是最佳有效 → 存在第一次对最佳有效伴侣的拒绝(w拒绝m选择m’) → 存在稳定匹配S’这次m’选择了w’≠w  → 这次拒绝之前没有任何对最佳有效伴侣以及有效伴侣的拒绝 → m’没有被拒绝 → m’不可能先选w’然后被拒绝了选w → m’先选w → m’更爱w w更改m’ → 稳定匹配S存在不稳定因素 → 矛盾 → G-S得到了S*<br> 这也间接解决了第一点注意，即S*为一个完美匹配因为S*为G-S算法得到结果，该结果为稳定匹配，S*当然为完美匹配。</li>
+</ol>
+</li>
+<li>S*既然是G-S算法得到的唯一稳定匹配，从可能存在的若干个稳定匹配中脱颖而出肯定具备一定特点。在之前讨论中已经发现S*是偏向于男生的，因为每个配对的女生都是其最优匹配，那么对于女生来说这个配对意味什么呢？<br> 根据性质8我们已经知道结论：在稳定匹配S*中每个女生都与他最差的有效伴侣配对<br> 证明过程：假设S*中存在有序对(m,w)使得m不是w的最差有效伴侣，那么肯定存在一个稳定匹配S’，w在这个稳定匹配中和更不喜欢的男生m’配对，w更喜欢m，而m与另一个女生w’=w配对，而w为m的最佳有效伴侣，w’为m的有效伴侣，所以m更喜欢w，那么在稳定匹配S’中(m,w)即为不稳定因素与S’为稳定匹配矛盾。<br> 故得到性质8</li>
+</ol>
+</li>
+</ol>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><pre><code>G-S算法实现代码如下：
+</code></pre><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">10005</span>;</span><br><span class="line"><span class="keyword">int</span> W[N]=&#123;<span class="number">0</span>&#125;,M[N]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> M_pri[N][N]=&#123;<span class="number">0</span>&#125;,W_pri[N][N]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getPri</span><span class="params">(<span class="keyword">int</span> )</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">G_S</span><span class="params">(<span class="keyword">int</span> )</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">output</span><span class="params">(<span class="keyword">int</span> )</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">lovemore</span><span class="params">(<span class="keyword">int</span> ,<span class="keyword">int</span> ,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line">	<span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">	getPri(n);</span><br><span class="line">	G_S(n);</span><br><span class="line">	output(n);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getPri</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=n;i++)</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;=n;j++)</span><br><span class="line">			<span class="built_in">cin</span>&gt;&gt;M_pri[i][j];</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=n;i++)</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;=n;j++)</span><br><span class="line">			<span class="built_in">cin</span>&gt;&gt;W_pri[i][j];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">lovemore</span><span class="params">(<span class="keyword">int</span> m,<span class="keyword">int</span> w,<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=num;i++)</span><br><span class="line">		<span class="keyword">if</span> (W_pri[w][i] == W[w])</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (W_pri[w][i] == m)</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">G_S</span><span class="params">(<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> m,w;</span><br><span class="line">	<span class="keyword">while</span> (M[<span class="number">0</span>]!=num)</span><br><span class="line">	&#123;</span><br><span class="line">		w=m=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">while</span> (M[++m]!=<span class="number">0</span>) ;</span><br><span class="line">		w = M_pri[m][++M_pri[m][<span class="number">0</span>]];</span><br><span class="line">		<span class="keyword">if</span> (W[w])	<span class="comment">//如果女生已经在约会了</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (lovemore(m,w,num))</span><br><span class="line">			&#123;</span><br><span class="line">				M[W[w]] = <span class="number">0</span>;</span><br><span class="line">				M[m] = w;</span><br><span class="line">				W[w] = m;	</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> </span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="comment">//如果女生没有约会还是自由状态</span></span><br><span class="line">		&#123;</span><br><span class="line">			M[m]=w;M[<span class="number">0</span>]++;</span><br><span class="line">			W[w]=m;W[<span class="number">0</span>]++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">output</span><span class="params">(<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i&lt;=num;i++)</span><br><span class="line">		<span class="built_in">cout</span>&lt;&lt;<span class="string">"("</span>&lt;&lt;i&lt;&lt;<span class="string">", "</span>&lt;&lt;M[i]&lt;&lt;<span class="string">")"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="样例测试"><a href="#样例测试" class="headerlink" title="样例测试"></a>样例测试</h2><h3 id="样例输入"><a href="#样例输入" class="headerlink" title="样例输入"></a>样例输入</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">10</span><br><span class="line"></span><br><span class="line">2 5 4 7 3 6 9 8 10 1  </span><br><span class="line">3 2 1 4 5 9 6 10 8 7 </span><br><span class="line">5 4 9 10 1 3 2 8 7 6 </span><br><span class="line">3 8 7 2 5 4 9 1 10 6 </span><br><span class="line">6 4 9 5 3 1 8 7 2 10 </span><br><span class="line">6 1 2 8 3 9 10 5 7 4 </span><br><span class="line">7 3 10 9 1 8 6 2 5 4  </span><br><span class="line">10 8 2 9 1 3 6 7 4 5  </span><br><span class="line">9 1 6 10 7 8 2 3 5 4  </span><br><span class="line">8 10 2 7 3 1 6 9 5 4 </span><br><span class="line"></span><br><span class="line">4 6 1 7 10 5 9 8 3 2  </span><br><span class="line">1 2 4 3 8 9 6 10 5 7 </span><br><span class="line">2 1 8 10 4 3 6 9 7 5 </span><br><span class="line">3 1 7 4 5 2 6 8 10 9 </span><br><span class="line">6 7 9 4 3 1 10 5 2 8 </span><br><span class="line">4 1 2 8 10 9 3 5 7 6 </span><br><span class="line">7 3 8 9 1 10 5 2 6 4  </span><br><span class="line">10 4 2 3 1 8 6 7 9 5  </span><br><span class="line">5 2 6 10 7 8 1 3 9 4  </span><br><span class="line">7 1 2 8 3 10 6 9 5 4</span><br></pre></td></tr></table></figure>
+<h3 id="样例输出"><a href="#样例输出" class="headerlink" title="样例输出"></a>样例输出</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(1,2)</span><br><span class="line">(2,3)</span><br><span class="line">(3,4)</span><br><span class="line">(4,5)</span><br><span class="line">(5,6)</span><br><span class="line">(6,1)</span><br><span class="line">(7,7)</span><br><span class="line">(8,10)</span><br><span class="line">(9,9)</span><br><span class="line">(10,8)</span><br></pre></td></tr></table></figure>]]></content>
+      
+        <categories>
+            
+            <category> 算法 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 稳定匹配问题 </tag>
+            
+            <tag> 算法设计与分析 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Nodepad++结合DOSBox配置一键编译运行]]></title>
+      <url>/Nodepad++%E7%BB%93%E5%90%88DOSBox%E9%85%8D%E7%BD%AE%E4%B8%80%E9%94%AE%E7%BC%96%E8%AF%91%E8%BF%90%E8%A1%8C.html</url>
+      <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>　　最近在学习汇编语言程序设计，在最开始肯定是要配置环境啦，但是我们学的还只是8086系列的处理器的汇编，而现在的CPU是酷睿系列了，根本不支持，所以就需要用到DOSBox来模拟环境，然而这就遇到一个问题了：DOSBox编译链接运行程序十分麻烦，而且每次重新打开都需要输入一大堆东西，很是浪费时间，那么如何简单快捷的实现像写C,C++时那样一个快捷键源代码就自动编译运行了呢？于是就有了这篇博文。</p>
+<h2 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a>配置环境</h2><p>　　首先介绍一下实现环境：<br>　　　　- DOSBox 0.74 模拟DOS系统<br>　　　　- Notepad++ v7.5.6 (64 bit) 用于编辑汇编源程序<br>　　　　- MASM 5.0 汇编程序编译器<br>　　　　- LINK 连接程序<br>　　　　- TD Turbor Debugger 调试器<br>　　这些软件需要自己下好并安装在对应位置，其中MASM LINK TD需要英文路径。</p>
+<a id="more"></a>
+<h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><p>　　实现的大致思路就是通过Notepad++运用批处理指令打开DOSBox 并在其中输入相关指令使源代码编译链接运行，实现编译运行调试的快捷指令需要三步</p>
+<h3 id="修改DOSBox配置文件"><a href="#修改DOSBox配置文件" class="headerlink" title="修改DOSBox配置文件"></a>修改DOSBox配置文件</h3><p>首先打开以下路径：</p>
+<blockquote>
+<p>C:\Users\Mr. Xing\AppData\Local\DOSBox</p>
+</blockquote>
+<p>然后就会在其中看到DOSBox的配置文件 dosbox-0.74.conf 用记事本打开在最下方的autoexec下输入MASM,LINK,TD的存放目录即</p>
+<blockquote>
+<p>mount c d:\program\asm<br>c:</p>
+</blockquote>
+<p>然后在保存关闭,这样在运行DOSBox的时候就会首先执行这两行而不用重新输入。两行指令意思是  </p>
+<ul>
+<li>将d:\program\asm挂载为DOSBox下的c盘</li>
+<li>进入c盘</li>
+</ul>
+<h3 id="配置编译运行"><a href="#配置编译运行" class="headerlink" title="配置编译运行"></a>配置编译运行</h3><p>修改完DOSBox的配置文件，接下来就需要配置编译运行快捷键了。<br>首先打开Notepad++ 输入一段测试汇编源程序，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">.386</span><br><span class="line">;----------------------------</span><br><span class="line">STACK   SEGMENT STACK use16</span><br><span class="line">    DB  200 DUP(0)</span><br><span class="line">STACK   ENDS</span><br><span class="line">;----------------------------</span><br><span class="line">DATA    SEGMENT use16</span><br><span class="line">MSG DB  &apos;How are you! $&apos;</span><br><span class="line">DATA    ENDS</span><br><span class="line">;------------------------------</span><br><span class="line">CODE SEGMENT use16</span><br><span class="line">        ASSUME CS:CODE,DS:DATA,SS:STACK</span><br><span class="line">BEGIN:  MOV  AX, DATA</span><br><span class="line">        MOV  DS, AX</span><br><span class="line">        MOV  DX, OFFSET MSG</span><br><span class="line">        MOV  AH, 9</span><br><span class="line">        INT  21H</span><br><span class="line">        MOV  AH,4CH   ;exit</span><br><span class="line">        INT  21H</span><br><span class="line">;-----------------------------</span><br><span class="line">CODE    ENDS</span><br><span class="line">    END BEGIN</span><br></pre></td></tr></table></figure></p>
+<p>然后点击菜单项的运行，如下图: 　<br><img src="./photo/notepad_run.jpg" width="50%" height="50%"><br>然后输入以下命令</p>
+<blockquote>
+<p><code>D:\软件\DOSBox\DOSBox-0.74\DOSBOX.exe -c &quot;@echo off&quot; -c &quot;mount d $(CURRENT_DIRECTORY)&quot; -c &quot;MASM d:\$(NAME_PART).asm;&quot; -c &quot;LINK $(NAME_PART).obj;&quot; -c &quot;COPY $(NAME_PART).exe d:\$(NAME_PART).exe&quot; -c cls -c &quot;d:\$(NAME_PART).exe&quot; -c echo. -c pause -c exit</code></p>
+</blockquote>
+<p>这段指令的意思如下:  </p>
+<ul>
+<li><code>D:\软件\DOSBox\DOSBox-0.74\DOSBOX.exe DOSBox</code>  软件运行程序文件地址</li>
+<li><code>-c DOSBox command</code>   命令 后跟一条指令且每条指令之前都要加-c</li>
+<li><code>@echo off</code>   批处理指令 意思是关闭回显(这样在输入每条指令的时候就不会有c:\之类的)</li>
+<li><code>mount d $(CURRENT_DIRECTORY)</code>    将当前汇编源程序挂在到DOSBox的d盘</li>
+<li><code>MASM d:\$(NAME_PART).asm;</code>   编译asm源程序生成二进制目标文件</li>
+<li><code>LINK $(NAME_PART).obj;</code>  链接二进制目标文件生成EXE文件</li>
+<li><code>COPY $(NAME_PART).exe d:\$(NAME_PART).exe</code>   将生成的EXE文件复制到源代码目录下</li>
+<li><code>cls</code>                     清屏</li>
+<li><code>d:\$(NAME_PART).exe</code>     运行生成程序</li>
+<li><code>echo.</code>                   换行</li>
+<li><code>pause</code>                   暂停</li>
+<li><code>exit</code>                    退出DOSBox</li>
+<li><code>$(FULL_CURRENT_PATH)</code>    当前文件绝对路径 如d:\program\asm\demo.asm</li>
+<li><code>$(CURRENT_DIRECTORY)</code>    当前目录 如d:\program\asm</li>
+<li><code>$(NAME_PART)</code>            当前文件文件名 如demo</li>
+<li><code>$(FILE_NAME)</code>            当前文件全名 如demo.asm</li>
+<li><code>$(EXT_PART)</code>             当前文件扩展名如 asm</li>
+</ul>
+<p><strong>特别注意:如果你的源代码在E盘,那么请在输入指令的时候将源代码挂载到E盘</strong><br><strong>这段程序只适合于保存到D:盘任何地方的asm文件</strong></p>
+<p>然后保存设置响应的名称和快捷键就OK了(我设置的是CTRL+ALT+B)，具体运行效果如下:<br><img src="./photo/notepad_exe.jpg" width="50%" height="50%">  </p>
+<h3 id="配置调试"><a href="#配置调试" class="headerlink" title="配置调试"></a>配置调试</h3><p>同理只需要在运行框中输入以下批处理指令即可</p>
+<blockquote>
+<p><code>D:\软件\DOSBox\DOSBox-0.74\DOSBOX.exe -c &quot;mount d $(CURRENT_DIRECTORY)&quot; -c &quot;TD d:\$(NAME_PART).exe&quot;</code></p>
+</blockquote>
+<p>运行结果如下:<br><img src="./photo/td_demo_exe.jpg" width="50%" height="50%">  </p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>这次实现一键编译翻了许多文档，发现最全的还是官方文档，学习到了许多关于批处理的知识，收获还是蛮多的。<br>还有就是由于指令长度的限制 在一键编译的时候并没有删除编译得到的obj和exe文件需要清理，有需要的小伙伴可以怎加一条指令del专门清理.obj 和 .exe<br>如果有什么疑惑或者见解欢迎留言。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> Assembly </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 汇编assembly </tag>
+            
+            <tag> DOSBox </tag>
+            
+            <tag> Notepad++ </tag>
+            
+            <tag> 批处理 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[盒子与小球]]></title>
+      <url>/%E5%B0%8F%E7%90%83%E4%B8%8E%E7%9B%92%E5%AD%90.html</url>
+      <content type="html"><![CDATA[<h3 id="Description-of-the-Problem"><a href="#Description-of-the-Problem" class="headerlink" title="Description of the Problem:"></a>Description of the Problem:</h3><blockquote>
+<p>你有K个相同的盒子，N个互不相同的物品。你准备把这N个物品装入K个盒子，每个盒子最少要放入一个物品。问一共会有多少种分配方法。由于方案数很大，只需要输出方案总数除以10000的余数。</p>
+</blockquote>
+<h4 id="INPUT："><a href="#INPUT：" class="headerlink" title="INPUT："></a>INPUT：</h4><blockquote>
+<p>第一行有一个正整数 t ，表示数据组数(不多于50)。每组数据仅一行，两个整数， N 和K，其中1≤N ≤ 10^9，K≤min(50,N)。</p>
+</blockquote>
+<h4 id="OUTPUT："><a href="#OUTPUT：" class="headerlink" title="OUTPUT："></a>OUTPUT：</h4><blockquote>
+<p>每行输出一个整数，为方案总数除以10000的余数。</p>
+</blockquote>
+<a id="more"></a>
+<h3 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis:"></a>Analysis:</h3><p>　　这是一个来自于同为HUSTer的高中童鞋的问题,从这个问题描述中,我们可以知道把N个物品放入K个相同的盒子的方法数就是  把N-1个物品放入K-1个盒子的方法数  加上  把N-1个物品放入K个盒子的方法数*K,为什么?我们只要考虑最后一个盒子和最后一个球即可,由于盒子是相同的,那么有两种情况<br>　　1.最后一个盒子只有一个球且为第N个球，即前面N-1个球没有填满K个盒子，最后一个球只能放在空盒子里。这种情况方法数就等于把N-1个物品放入K-1个盒子的方法数。<br>　　2.前面N-1个球填满的K个盒子，那么最后一个球可以任意放。这种情况方法数就等于  把N-1个物品放入K个盒子的方法数*K。</p>
+<p>　　所以如果用f(N,K)来表示 N个物品K个盒子的方法数，可以得到以下递推式</p>
+<p>　　<strong>f(N,K)=f(N-1,K-1)+f(N-1,K)*K;(即第二类斯特林数)</strong></p>
+<p>　　所以现在已经可以用程序通过递推算出结果（递归也可以但要慢一些，即使是记忆化递归）。但问题解决了吗？</p>
+<p>　　答案是：<strong>NO</strong>。由于N很大所以要一项一项递推计算f(N,K)肯定会超时应为至少要算N*K次，所以显然要找更快速的算法让时间复杂度降低O(logn*K)。我们这时可以运用矩阵+快速幂的形式来解决这个问题。</p>
+<p>　　首先来解释一下什么是快速幂：举个例子，对于计算q^k，我们其实可以将之看成<strong>q^[a(n)*2^n+a(n-1)*2^(n-1)+……a(1)*2^1+a(0)*2^0]</strong>,其中a(n)=0或1。即把k看成许多{2^m}中某n+1项之和，那么怎么快速计算q^k呢？我们先把q^k看成n+1项之积，然后我们可以对k不断除2取余，如果第i次除2后余数为1，那么表示a(i-1)=1，即有n+1项乘积中有q^(i-1)这一项，具体描述步骤如下</p>
+<p>　　首先我们用让一个数ans=1，用来存答案，用一个数x来存q^(i-1)，x开始为1，然后先对k进行第一次除以2，如果余数为1，证明a(0)=1，有q^0这一项，于是让ans*=x,如果不为1，证明不存在这一项(或者说着这一项为1)，就不用乘，然后进行完上述操作，x*=q;<br>　　然后我们对k进行第二次除以2，此时x=q^1，如果余数为1，证明a(1)=1，有q^1这一项，于是让ans*=x,如果不为1，证明不存在这一项(或者说着这一项为1)，就不用乘，然后进行完上述操作，x*=q;所以在对k进行第i次除以2操作时，x=q^(i-1)， 如果余数为1，证明a(i-1)=1，有q^(i-1)这一项，于是让ans*=x,如果不为1，证明不存在这一项(或者说着这一项为1)，就不用乘，然后进行完上述操作，x*=q;最后如果k=0证明已经除完了，ans已经算完那么就得到了结果，结束运算。<br>　　现在来分析一下算法效率，若按照原算法计算q^k要乘k次也就是计算k次，用现在的快速幂算法，则要除以[log2(k)]+1次，也就是x要乘[log2(k)]+1次，而如果a(n)均为1，那么要ans也要乘 [log2(k)]+1，所以最多算2{[log2(k)]+1}次算法效率为O(logk)。<br>        现在来讲一讲矩阵乘法：<br>　　定义：设A为m×p的矩阵，B为p×n的矩阵，那么称m×n的矩阵C为矩阵A与B的乘积，记作C=A×B<br>　　计算方法：乘积C的第m行第n列的元素等于矩阵A的第m行的元素与矩阵B的第n列对应元素乘积之和。<br>        性质：乘法结合律：(AB)C=A(BC)</p>
+<p>　　所以我们可以把原问题的递推式子变成一个矩阵递推式<br>$$\begin{equation}<br>\begin{pmatrix}<br>f(n,k)\\<br>f(n,k-1)\\<br>\vdots\\<br>f(n,2)\\<br>f(n,1)\\<br>\end{pmatrix}={<br>\begin{pmatrix}<br>k&amp;1&amp;0&amp;\cdots&amp;0&amp;0\\<br>0&amp;k-1&amp;1&amp;\cdots&amp;0&amp;0\\<br>\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\<br>0&amp;0&amp;0&amp;\cdots&amp;2&amp;1\\<br>0&amp;0&amp;0&amp;\cdots&amp;0&amp;1\\<br>\end{pmatrix}}<br>{\begin{pmatrix}<br>f(n-1,k)\\<br>f(n-1,k-1)\\<br>\vdots\\<br>f(n-1,2)\\<br>f(n-1,1)\\<br>\end{pmatrix}}<br>\end{equation}$$</p>
+<p>　　所以可以用矩阵递推式把原递推式变成等比数列形式那么可以得到以下式子<br>$$\begin{equation}<br>\begin{pmatrix}<br>f(n,k)\\<br>f(n,k-1)\\<br>\vdots\\<br>f(n,2)\\<br>f(n,1)\\<br>\end{pmatrix}={<br>\begin{pmatrix}<br>k&amp;1&amp;0&amp;\cdots&amp;0&amp;0\\<br>0&amp;k-1&amp;1&amp;\cdots&amp;0&amp;0\\<br>\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\<br>0&amp;0&amp;0&amp;\cdots&amp;2&amp;1\\<br>0&amp;0&amp;0&amp;\cdots&amp;0&amp;1\\<br>\end{pmatrix}}^{(n-k)}<br>{\begin{pmatrix}<br>f(k,k)\\<br>f(k,k-1)\\<br>\vdots\\<br>f(k,2)\\<br>f(k,1)\\<br>\end{pmatrix}}<br>\end{equation}$$    </p>
+<p>　　然后我们将快速幂与矩阵乘法递推式结合起来，我们只需要先用递推计算出base矩阵，然后用快速幂算出per矩阵的(n-k)次方两者相乘得到ans 其中我们将ans矩阵不再初始化为1，而是初始化为矩阵中的“1”(其他矩阵相乘等于其他)。<br>$$<br>{<br>\begin{pmatrix}<br>1&amp;0&amp;0&amp;\cdots&amp;0&amp;0\\<br>0&amp;1&amp;0&amp;\cdots&amp;0&amp;0\\<br>\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\<br>0&amp;0&amp;0&amp;\cdots&amp;1&amp;0\\<br>0&amp;0&amp;0&amp;\cdots&amp;0&amp;1\\<br>\end{pmatrix}}<br>$$</p>
+<h3 id="Code"><a href="#Code" class="headerlink" title="Code:"></a>Code:</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> mod=<span class="number">10000</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">matrix</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">long</span> <span class="keyword">long</span> m[<span class="number">66</span>][<span class="number">66</span>];</span><br><span class="line">&#125;;</span><br><span class="line">matrix per,ans,base,cal,unit; </span><br><span class="line"><span class="function">matrix <span class="title">mul</span><span class="params">(matrix a,matrix b,<span class="keyword">int</span> x,<span class="keyword">int</span> y,<span class="keyword">int</span> z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	matrix c;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;x;i++)</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;z;j++)</span><br><span class="line">	&#123;</span><br><span class="line">		c.m[i][j]=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> k=<span class="number">0</span>;k&lt;y;k++)</span><br><span class="line">			c.m[i][j]=(c.m[i][j]+a.m[i][k]*b.m[k][j])%mod;</span><br><span class="line">		c.m[i][j]=c.m[i][j]%mod;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">matrix <span class="title">qpow</span><span class="params">(<span class="keyword">int</span> n,<span class="keyword">int</span> k)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	matrix p=per;</span><br><span class="line">	<span class="keyword">int</span> ci=n-k;</span><br><span class="line">	<span class="keyword">while</span> (ci)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (ci&amp;<span class="number">1</span>) </span><br><span class="line">		&#123;</span><br><span class="line">		   unit=mul(unit,p,k,k,k);</span><br><span class="line">		   ci--;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> </span><br><span class="line">		&#123;</span><br><span class="line">			p=mul(p,p,k,k,k);</span><br><span class="line">			ci&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> unit;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> k)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">50</span>;i++) </span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">50</span>;j++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (i==j&amp;&amp;i&lt;k) per.m[i][j]=k-i;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (j<span class="number">-1</span>==i&amp;&amp;j&lt;k) per.m[i][j]=<span class="number">1</span>;</span><br><span class="line">		<span class="keyword">else</span> per.m[i][j]=<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span>(i==j) unit.m[i][j]=<span class="number">1</span>;</span><br><span class="line">		<span class="keyword">else</span> unit.m[i][j]=<span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;k;i++)</span><br><span class="line">	base.m[i][<span class="number">0</span>]=cal.m[k<span class="number">-1</span>][k<span class="number">-1</span>-i];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">calculation</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">50</span>;i++) cal.m[i][i]=cal.m[i][<span class="number">0</span>]=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;<span class="number">50</span>;i++)</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;i;j++)</span><br><span class="line">	cal.m[i][j]=(cal.m[i<span class="number">-1</span>][j]*(j+<span class="number">1</span>)+cal.m[i<span class="number">-1</span>][j<span class="number">-1</span>])%mod;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> t,n,k;</span><br><span class="line">	<span class="built_in">cin</span>&gt;&gt;t;</span><br><span class="line">	calculation();</span><br><span class="line">	<span class="keyword">while</span> (t--)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">cin</span>&gt;&gt;n&gt;&gt;k;</span><br><span class="line">		init(k);</span><br><span class="line">		matrix xi=qpow(n,k);</span><br><span class="line">		ans=mul(xi,base,k,k,<span class="number">1</span>);</span><br><span class="line">		<span class="built_in">cout</span>&lt;&lt;ans.m[<span class="number">0</span>][<span class="number">0</span>]&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Addition："><a href="#Addition：" class="headerlink" title="Addition："></a>Addition：</h3><p>下面给出一部分结果</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">n k</th>
+<th style="text-align:center">1</th>
+<th style="text-align:center">2</th>
+<th style="text-align:center">3</th>
+<th style="text-align:center">4</th>
+<th style="text-align:center">5</th>
+<th style="text-align:center">6</th>
+<th style="text-align:center">7</th>
+<th style="text-align:center">8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">25</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">31</td>
+<td style="text-align:center">90</td>
+<td style="text-align:center">65</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">63</td>
+<td style="text-align:center">301</td>
+<td style="text-align:center">350</td>
+<td style="text-align:center">140</td>
+<td style="text-align:center">21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">127</td>
+<td style="text-align:center">966</td>
+<td style="text-align:center">1701</td>
+<td style="text-align:center">1050</td>
+<td style="text-align:center">266</td>
+<td style="text-align:center">28</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+      
+        <categories>
+            
+            <category> Tech </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 矩阵 </tag>
+            
+            <tag> 快速幂 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Hello World]]></title>
+      <url>/hello-world.html</url>
+      <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.<br><a id="more"></a></p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+]]></content>
+      
+        
+    </entry>
+    
+  
+  
 </search>
