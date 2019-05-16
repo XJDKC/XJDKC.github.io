@@ -92,13 +92,13 @@
 
 
 
-<meta name="description" content="1. 前言​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。">
+<meta name="description" content="前言​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。">
 <meta name="keywords" content="计算机组成原理,Cache">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CMU CacheLab">
 <meta property="og:url" content="https://xjdkc.github.io/CMU CacheLab.html">
 <meta property="og:site_name" content="橡胶大口吃のBlog">
-<meta property="og:description" content="1. 前言​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。">
+<meta property="og:description" content="前言​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/Flow.png">
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/Exp1_1.png">
@@ -109,10 +109,10 @@
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/Exp2_4.png">
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/Exp2_5.png">
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/ExpTest.jpg">
-<meta property="og:updated_time" content="2019-05-16T17:14:44.981Z">
+<meta property="og:updated_time" content="2019-05-16T17:22:48.344Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CMU CacheLab">
-<meta name="twitter:description" content="1. 前言​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。">
+<meta name="twitter:description" content="前言​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。">
 <meta name="twitter:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/Flow.png">
 
 
@@ -439,7 +439,7 @@
              <i class="fa fa-calendar-o"></i>
            </span>
            <span class="post-meta-item-text">字数统计:</span>
-           <span class="post-count">6,765(字)</span>
+           <span class="post-count">6,732(字)</span>
            
          </span>
 	  
@@ -472,9 +472,9 @@
       
 
       
-        <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><p>​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。</p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>​        最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。</p>
 <a id="more"></a>
-<h2 id="2-实验要求"><a href="#2-实验要求" class="headerlink" title="2. 实验要求"></a>2. 实验要求</h2><h3 id="2-1-实验一要求"><a href="#2-1-实验一要求" class="headerlink" title="2.1 实验一要求"></a>2.1 实验一要求</h3><p>​        在第一部分中，需要实现一个Cache模拟器，根据输入的trace文件中对于各个数据的访问情况来模拟整个Cache的工作，其中trace文件是linux下valgrind工具获得。</p>
+<h2 id="实验要求"><a href="#实验要求" class="headerlink" title="实验要求"></a>实验要求</h2><h3 id="实验一要求"><a href="#实验一要求" class="headerlink" title="实验一要求"></a>实验一要求</h3><p>​        在第一部分中，需要实现一个Cache模拟器，根据输入的trace文件中对于各个数据的访问情况来模拟整个Cache的工作，其中trace文件是linux下valgrind工具获得。</p>
 <ul>
 <li>在csim.c提供的程序框架中编写实现一个Cache模拟器，输入为内存访问轨迹trace文件，程序的功能需要模拟缓存相对内存访问轨迹的命中/缺失行为，输出为命中、缺失和缓存行淘汰/驱逐的总数。</li>
 <li>完成的csim.c文件生成的可执行程序结果应与参考存储模拟器csim-ref在相同的命令行参数下产生一致的输出结果</li>
@@ -487,7 +487,7 @@
 </blockquote>
 </li>
 </ul>
-<h3 id="2-2-实验二要求"><a href="#2-2-实验二要求" class="headerlink" title="2.2 实验二要求"></a>2.2 实验二要求</h3><p>​        在第二部分中，需要完成矩阵转置的优化，由于Cache是对于局部性较好的程序性能更好，所以需要优化常规的矩阵转置程序让Cache的命中数尽可能的高而缺失以及替换次数尽可能的低。<br>​        实验的具体目的以及要求为：在trans.c中编写实现一个矩阵转置函数transpose_submit，要求其在参考Cache模拟器csim-ref上运行时对不同大小的矩阵均能最小化缓存缺失的数量。该函数的输入为两个二维数组A、B，函数的功能是将A进行矩阵转置后将结果存放到B中。<br>​        对于实现的限制要求有：</p>
+<h3 id="实验二要求"><a href="#实验二要求" class="headerlink" title="实验二要求"></a>实验二要求</h3><p>​        在第二部分中，需要完成矩阵转置的优化，由于Cache是对于局部性较好的程序性能更好，所以需要优化常规的矩阵转置程序让Cache的命中数尽可能的高而缺失以及替换次数尽可能的低。<br>​        实验的具体目的以及要求为：在trans.c中编写实现一个矩阵转置函数transpose_submit，要求其在参考Cache模拟器csim-ref上运行时对不同大小的矩阵均能最小化缓存缺失的数量。该函数的输入为两个二维数组A、B，函数的功能是将A进行矩阵转置后将结果存放到B中。<br>​        对于实现的限制要求有：</p>
 <ul>
 <li>限制对栈的引用——在转置函数中最多定义和使用12个int类型的局部变量，同时不能使用任何long类型的变量或其他位模式数据以在一个变量中存储多个值。原因是实验测试代码不能/不应计数栈的引用访问，而应将注意力集中在对源和目的矩阵的访问模式上。</li>
 <li>不允许使用递归。如果定义和调用辅助函数，在任意时刻，从转置函数的栈帧到辅助函数的栈帧之间最多可以同时存在12个局部变量。例如，如果转置函数定义了8个局部变量，其中调用了一个使用4个局部变量的函数，而其进一步调用了一个使用2个局部变量的函数，则栈上总共将有14个变量，则违反了本规则。 </li>
@@ -495,7 +495,7 @@
 <li>不允许在代码中定义任何矩阵或使用malloc及其变种。</li>
 </ul>
 <p>​        实验的测试数据有三组，在实验中可能针对这三种数据规模的数据进行特殊优化。</p>
-<h2 id="3-实验环境"><a href="#3-实验环境" class="headerlink" title="3. 实验环境"></a>3. 实验环境</h2><table>
+<h2 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h2><table>
 <thead>
 <tr>
 <th style="text-align:center">项目</th>
@@ -525,7 +525,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="4-实验源文件详解"><a href="#4-实验源文件详解" class="headerlink" title="4. 实验源文件详解"></a>4. 实验源文件详解</h2><h3 id="4-1-cachelab-c"><a href="#4-1-cachelab-c" class="headerlink" title="4.1 cachelab.c"></a>4.1 cachelab.c</h3><p>​        CacheLab功能函数功能源码文件。结构体及函数如下：</p>
+<h2 id="实验源文件详解"><a href="#实验源文件详解" class="headerlink" title="实验源文件详解"></a>实验源文件详解</h2><h3 id="cachelab-c"><a href="#cachelab-c" class="headerlink" title="cachelab.c"></a>cachelab.c</h3><p>​        CacheLab功能函数功能源码文件。结构体及函数如下：</p>
 <ul>
 <li><strong><code>printSummary</code></strong>：打印Cache模拟结果，包括命中次数、缺失次数、替换次数</li>
 <li><strong><code>initMatrix</code></strong>：初始化两个矩阵，用于第二个实验</li>
@@ -535,8 +535,8 @@
 <li><p><strong><code>rigisterTransFunction</code></strong>：注册转置函数，根据传入的转置函数指针以及函数描述字符串注册函数，并将该函数的cache模拟结果成员变量以及是否正确转置位初始化(hits，misses，evitions，correct)。</p>
 </li>
 </ul>
-<h3 id="4-2-cachelab-h"><a href="#4-2-cachelab-h" class="headerlink" title="4.2 cachelab.h"></a>4.2 cachelab.h</h3><p>​        cachelab.c头文件，包括函数定义以及注册函数结构体定义。</p>
-<h3 id="4-3-csim-c"><a href="#4-3-csim-c" class="headerlink" title="4.3 csim.c"></a>4.3 csim.c</h3><p>​        实验一文件，根据存放程序对数据的访问记录的输入文件内容，模拟cache，获得模拟结果。变量与函数解析如下：</p>
+<h3 id="cachelab-h"><a href="#cachelab-h" class="headerlink" title="cachelab.h"></a>cachelab.h</h3><p>​        cachelab.c头文件，包括函数定义以及注册函数结构体定义。</p>
+<h3 id="csim-c"><a href="#csim-c" class="headerlink" title="csim.c"></a>csim.c</h3><p>​        实验一文件，根据存放程序对数据的访问记录的输入文件内容，模拟cache，获得模拟结果。变量与函数解析如下：</p>
 <ul>
 <li><strong>变量解析</strong><ul>
 <li><strong><code>verbosity</code></strong>：是否输出每一行记录的命中、缺失、替换情况，一般用于bug测试</li>
@@ -559,14 +559,14 @@
 </ul>
 </li>
 </ul>
-<h3 id="4-4-trans-c"><a href="#4-4-trans-c" class="headerlink" title="4.4 trans.c"></a>4.4 trans.c</h3><p>​        实验二文件，存放多个转置函数，包括需要提交的函数(根据函数描述来确定是否未提交的结果函数)，还包括注册函数，将多个转置函数注册到实验二测试集合中。</p>
+<h3 id="trans-c"><a href="#trans-c" class="headerlink" title="trans.c"></a>trans.c</h3><p>​        实验二文件，存放多个转置函数，包括需要提交的函数(根据函数描述来确定是否未提交的结果函数)，还包括注册函数，将多个转置函数注册到实验二测试集合中。</p>
 <ul>
 <li><strong><code>is_transpose</code></strong>：判断是否转置成功，但是所有代码中都没用到该函数，应该是编写trans时的测试函数</li>
 <li><strong><code>transpose_submit</code></strong>：最终提交的你的转置优化函数，最终算分也是根据这个函数的测试结果算分，其对应的函数描述为Transpose submission</li>
 <li><strong><code>trans</code></strong>：最简单的没有任何优化的转置函数，函数描述为Simple row-wise scan transpose</li>
 <li><strong><code>registerFunctions</code></strong>：注册所有转置函数，可以自行添加新的转置函数用于中间测试</li>
 </ul>
-<h3 id="4-5-tracegen-c"><a href="#4-5-tracegen-c" class="headerlink" title="4.5 tracegen.c"></a>4.5 tracegen.c</h3><p>​        跟踪记录文件生成 根据转置函数对数据的访问生成数据访问记录文件，这样csim就可以根据文件模拟，输出的MARKER_START、MARKER_END的地址，输出文件名为.marker。</p>
+<h3 id="tracegen-c"><a href="#tracegen-c" class="headerlink" title="tracegen.c"></a>tracegen.c</h3><p>​        跟踪记录文件生成 根据转置函数对数据的访问生成数据访问记录文件，这样csim就可以根据文件模拟，输出的MARKER_START、MARKER_END的地址，输出文件名为.marker。</p>
 <ul>
 <li><strong>变量解析</strong><ul>
 <li><strong><code>func_list</code></strong>：转置函数列表，用于存放每个转置函数的入口地址、函数描述、正确性以及模拟结果，从cachelab.c中extern得到</li>
@@ -584,7 +584,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="4-6-test-trans-c"><a href="#4-6-test-trans-c" class="headerlink" title="4.6 test-trans.c"></a>4.6 test-trans.c</h3><p>​        用于实验二测试每个注册的转置函数，并输出cache模拟结果。</p>
+<h3 id="test-trans-c"><a href="#test-trans-c" class="headerlink" title="test-trans.c"></a>test-trans.c</h3><p>​        用于实验二测试每个注册的转置函数，并输出cache模拟结果。</p>
 <ul>
 <li><p><strong><code>eval_perf</code></strong>：评估表现函数，评估注册的转置函数的性能</p>
 <p> ​    <strong><code>执行的流程</code>​</strong>：</p>
@@ -601,11 +601,11 @@
 </ul>
 </li>
 </ul>
-<h2 id="5-程序执行流程"><a href="#5-程序执行流程" class="headerlink" title="5. 程序执行流程"></a>5. 程序执行流程</h2><h3 id="5-1-实验一执行流程"><a href="#5-1-实验一执行流程" class="headerlink" title="5.1 实验一执行流程"></a>5.1 实验一执行流程</h3><ol>
+<h2 id="程序执行流程"><a href="#程序执行流程" class="headerlink" title="程序执行流程"></a>程序执行流程</h2><h3 id="实验一执行流程"><a href="#实验一执行流程" class="headerlink" title="实验一执行流程"></a>实验一执行流程</h3><ol>
 <li>运行test-csim测试csim</li>
 <li>运行csim的执行文件，传入不同的参数，根据traces文件夹下的各个追踪文件模拟cache，与csim-ref的正确结果进行比对并输出结果。</li>
 </ol>
-<h3 id="5-2-实验二执行流程"><a href="#5-2-实验二执行流程" class="headerlink" title="5.2 实验二执行流程"></a>5.2 实验二执行流程</h3><ol>
+<h3 id="实验二执行流程"><a href="#实验二执行流程" class="headerlink" title="实验二执行流程"></a>实验二执行流程</h3><ol>
 <li>运行test-trans，测试命令行制定的矩阵大小</li>
 <li>对每个注册函数进行测试，文件流程</li>
 </ol>
@@ -613,7 +613,7 @@
 <ol>
 <li>每次测试输出测试结果</li>
 </ol>
-<h3 id="5-3-driver-py执行流程"><a href="#5-3-driver-py执行流程" class="headerlink" title="5.3 driver.py执行流程"></a>5.3 driver.py执行流程</h3><ol>
+<h3 id="driver-py执行流程"><a href="#driver-py执行流程" class="headerlink" title="driver.py执行流程"></a>driver.py执行流程</h3><ol>
 <li><p>运行test-csim测试实验一，获得实验一分数，共八个样例，除最后一个样例6分其他均3分</p>
 <blockquote>
 <p>linux&gt; ./csim -s 1 -E 1 -b 1 -t traces/yi2.trace</p>
@@ -636,7 +636,7 @@
 <li><p>计算两个实验得分得到总分，共53分</p>
 </li>
 </ol>
-<h2 id="6-实验思路"><a href="#6-实验思路" class="headerlink" title="6. 实验思路"></a>6. 实验思路</h2><h3 id="6-1-实验一思路"><a href="#6-1-实验一思路" class="headerlink" title="6.1 实验一思路"></a>6.1 实验一思路</h3><p>​        在第一部分中，需要修改的文件只有csim.c。在该文件中，包含的函数有：</p>
+<h2 id="实验思路"><a href="#实验思路" class="headerlink" title="实验思路"></a>实验思路</h2><h3 id="实验一思路"><a href="#实验一思路" class="headerlink" title="实验一思路"></a>实验一思路</h3><p>​        在第一部分中，需要修改的文件只有csim.c。在该文件中，包含的函数有：</p>
 <ul>
 <li>void initCache()</li>
 <li>void initCache()</li>
@@ -660,7 +660,7 @@
 </li>
 </ul>
 <p>​        需要注意的是对于I指令由于在本实验中不考虑对于指令的模拟，知识针对数据Cache的一个模拟，所以在输入文件中已经过滤掉了对于指令的轨迹数据。对于M指令，由于是一个修改指令所以是读取了依次数据修改后存放回回去，所以这一条指令其实是房村了两次，所以要调用两次accessData函数。具体流程图实现如下图所示：<br><img src="../photo/CMU CacheLab/Exp1_2.png"></p>
-<h3 id="6-2-实验二思路"><a href="#6-2-实验二思路" class="headerlink" title="6.2 实验二思路"></a>6.2 实验二思路</h3><p>​        由于是针对矩阵转置的一个优化，所以需要知道原来的程序不好的地方在哪里。在trans.c程序中已经完成了一个简单的矩阵转置函数，函数描述为“Simple row-wise scan transpose”，其实现原理就是通过两重循环完成对应矩阵的转置。在这个程序中，其不足的地方有：</p>
+<h3 id="实验二思路"><a href="#实验二思路" class="headerlink" title="实验二思路"></a>实验二思路</h3><p>​        由于是针对矩阵转置的一个优化，所以需要知道原来的程序不好的地方在哪里。在trans.c程序中已经完成了一个简单的矩阵转置函数，函数描述为“Simple row-wise scan transpose”，其实现原理就是通过两重循环完成对应矩阵的转置。在这个程序中，其不足的地方有：</p>
 <ul>
 <li><p>B数组不同行之间的Cache替换：由于是先读取A矩阵的一行存放到B矩阵的一列，那么存放到B矩阵的一列时，由于数据存放是按照行优先所以需要访问B中每一行前面的数据，也就是说要将每一行前面的数据都要加载到Cache中。但是Cache的行数是有限的，能够存放的不同的B数组行的行数是有限的，如果存放不下B的所有行，当需要访问B的后面的行是就会将原来的B的行替换出来造成依次替换，而由于每一列B都要经历这个过程，所以说每一次B的数据访问都会造成一次替换，Cache的效率很低。</p>
 </li>
@@ -697,9 +697,9 @@
 <p>​       重复2-5步骤直到将完成A的转置，在不考虑A、B之外的数据Cache冲突的情况下，8*8块的转置的总的缺失次数为(4+4+4+4)=16次，对于64*64的矩阵来说，理想情况下的缺失次数为16*8*8=1024，加上可能与局部变量之间的冲突以及除了转置函数循环之外的代码的数据访问，总的数据访问缺失次数应小于1300，预计符合题目要求。</p>
 <p>​       根据以上设计，书写代码完成对于64*64大小矩阵的优化，最终优化代码如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;N;i+=<span class="number">8</span>)</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;M;j+=<span class="number">8</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k=i;k&lt;i+<span class="number">4</span>;k++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (l=<span class="number">0</span>;l&lt;<span class="number">8</span>;l++)</span><br><span class="line">                temp[l]=A[k][j+l];</span><br><span class="line">            <span class="keyword">for</span> (l=<span class="number">0</span>;l&lt;<span class="number">4</span>;l++)</span><br><span class="line">            &#123;</span><br><span class="line">                B[j+l][k] = temp[l];</span><br><span class="line">                B[j+l][k+<span class="number">4</span>] = temp[l+<span class="number">4</span>];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k=j+<span class="number">4</span>;k&lt;j+<span class="number">8</span>;k++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (l=<span class="number">0</span>;l&lt;<span class="number">4</span>;l++)</span><br><span class="line">                temp[l]=B[k<span class="number">-4</span>][i+l+<span class="number">4</span>];</span><br><span class="line">            <span class="keyword">for</span> (l=<span class="number">4</span>;l&lt;<span class="number">8</span>;l++)</span><br><span class="line">                temp[l]=A[i+l][k];</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (l=<span class="number">4</span>;l&lt;<span class="number">8</span>;l++)</span><br><span class="line">                B[k<span class="number">-4</span>][i+l]=A[i+l][k<span class="number">-4</span>];</span><br><span class="line">            <span class="keyword">for</span> (l=<span class="number">0</span>;l&lt;<span class="number">8</span>;l++)</span><br><span class="line">                B[k][i+l]=temp[l];</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="7-测试结果"><a href="#7-测试结果" class="headerlink" title="7. 测试结果"></a>7. 测试结果</h2><p>​        运行python driver.py进行总体测试，结果如图所示。</p>
+<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p>​        运行python driver.py进行总体测试，结果如图所示。</p>
 <p><img src="../photo/CMU CacheLab/ExpTest.jpg" width="75%" height="75%"></p>
-<h2 id="8-后记"><a href="#8-后记" class="headerlink" title="8. 后记"></a>8. 后记</h2><p>​        完整的代码点击<a href="https://github.com/XJDKC/University-Code-Archive/tree/master/Course%20Experiment/Computer%20Architecture%20Course%20Exp" target="_blank" rel="noopener">Github</a>查看。</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>​        完整的代码点击<a href="https://github.com/XJDKC/University-Code-Archive/tree/master/Course%20Experiment/Computer%20Architecture%20Course%20Exp" target="_blank" rel="noopener">Github</a>查看。</p>
 
       
     </div>
@@ -924,7 +924,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-前言"><span class="nav-number">1.</span> <span class="nav-text"><a href="#1-&#x524D;&#x8A00;" class="headerlink" title="1. &#x524D;&#x8A00;"></a>1. &#x524D;&#x8A00;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-实验要求"><span class="nav-number">2.</span> <span class="nav-text"><a href="#2-&#x5B9E;&#x9A8C;&#x8981;&#x6C42;" class="headerlink" title="2. &#x5B9E;&#x9A8C;&#x8981;&#x6C42;"></a>2. &#x5B9E;&#x9A8C;&#x8981;&#x6C42;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-实验一要求"><span class="nav-number">2.1.</span> <span class="nav-text"><a href="#2-1-&#x5B9E;&#x9A8C;&#x4E00;&#x8981;&#x6C42;" class="headerlink" title="2.1 &#x5B9E;&#x9A8C;&#x4E00;&#x8981;&#x6C42;"></a>2.1 &#x5B9E;&#x9A8C;&#x4E00;&#x8981;&#x6C42;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-实验二要求"><span class="nav-number">2.2.</span> <span class="nav-text"><a href="#2-2-&#x5B9E;&#x9A8C;&#x4E8C;&#x8981;&#x6C42;" class="headerlink" title="2.2 &#x5B9E;&#x9A8C;&#x4E8C;&#x8981;&#x6C42;"></a>2.2 &#x5B9E;&#x9A8C;&#x4E8C;&#x8981;&#x6C42;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-实验环境"><span class="nav-number">3.</span> <span class="nav-text"><a href="#3-&#x5B9E;&#x9A8C;&#x73AF;&#x5883;" class="headerlink" title="3. &#x5B9E;&#x9A8C;&#x73AF;&#x5883;"></a>3. &#x5B9E;&#x9A8C;&#x73AF;&#x5883;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-实验源文件详解"><span class="nav-number">4.</span> <span class="nav-text"><a href="#4-&#x5B9E;&#x9A8C;&#x6E90;&#x6587;&#x4EF6;&#x8BE6;&#x89E3;" class="headerlink" title="4. &#x5B9E;&#x9A8C;&#x6E90;&#x6587;&#x4EF6;&#x8BE6;&#x89E3;"></a>4. &#x5B9E;&#x9A8C;&#x6E90;&#x6587;&#x4EF6;&#x8BE6;&#x89E3;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-cachelab-c"><span class="nav-number">4.1.</span> <span class="nav-text"><a href="#4-1-cachelab-c" class="headerlink" title="4.1 cachelab.c"></a>4.1 cachelab.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-cachelab-h"><span class="nav-number">4.2.</span> <span class="nav-text"><a href="#4-2-cachelab-h" class="headerlink" title="4.2 cachelab.h"></a>4.2 cachelab.h</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-csim-c"><span class="nav-number">4.3.</span> <span class="nav-text"><a href="#4-3-csim-c" class="headerlink" title="4.3 csim.c"></a>4.3 csim.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-trans-c"><span class="nav-number">4.4.</span> <span class="nav-text"><a href="#4-4-trans-c" class="headerlink" title="4.4 trans.c"></a>4.4 trans.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-tracegen-c"><span class="nav-number">4.5.</span> <span class="nav-text"><a href="#4-5-tracegen-c" class="headerlink" title="4.5 tracegen.c"></a>4.5 tracegen.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-test-trans-c"><span class="nav-number">4.6.</span> <span class="nav-text"><a href="#4-6-test-trans-c" class="headerlink" title="4.6 test-trans.c"></a>4.6 test-trans.c</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-程序执行流程"><span class="nav-number">5.</span> <span class="nav-text"><a href="#5-&#x7A0B;&#x5E8F;&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="5. &#x7A0B;&#x5E8F;&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>5. &#x7A0B;&#x5E8F;&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-实验一执行流程"><span class="nav-number">5.1.</span> <span class="nav-text"><a href="#5-1-&#x5B9E;&#x9A8C;&#x4E00;&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="5.1 &#x5B9E;&#x9A8C;&#x4E00;&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>5.1 &#x5B9E;&#x9A8C;&#x4E00;&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-实验二执行流程"><span class="nav-number">5.2.</span> <span class="nav-text"><a href="#5-2-&#x5B9E;&#x9A8C;&#x4E8C;&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="5.2 &#x5B9E;&#x9A8C;&#x4E8C;&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>5.2 &#x5B9E;&#x9A8C;&#x4E8C;&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-driver-py执行流程"><span class="nav-number">5.3.</span> <span class="nav-text"><a href="#5-3-driver-py&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="5.3 driver.py&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>5.3 driver.py&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-实验思路"><span class="nav-number">6.</span> <span class="nav-text"><a href="#6-&#x5B9E;&#x9A8C;&#x601D;&#x8DEF;" class="headerlink" title="6. &#x5B9E;&#x9A8C;&#x601D;&#x8DEF;"></a>6. &#x5B9E;&#x9A8C;&#x601D;&#x8DEF;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-实验一思路"><span class="nav-number">6.1.</span> <span class="nav-text"><a href="#6-1-&#x5B9E;&#x9A8C;&#x4E00;&#x601D;&#x8DEF;" class="headerlink" title="6.1 &#x5B9E;&#x9A8C;&#x4E00;&#x601D;&#x8DEF;"></a>6.1 &#x5B9E;&#x9A8C;&#x4E00;&#x601D;&#x8DEF;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-实验二思路"><span class="nav-number">6.2.</span> <span class="nav-text"><a href="#6-2-&#x5B9E;&#x9A8C;&#x4E8C;&#x601D;&#x8DEF;" class="headerlink" title="6.2 &#x5B9E;&#x9A8C;&#x4E8C;&#x601D;&#x8DEF;"></a>6.2 &#x5B9E;&#x9A8C;&#x4E8C;&#x601D;&#x8DEF;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-测试结果"><span class="nav-number">7.</span> <span class="nav-text"><a href="#7-&#x6D4B;&#x8BD5;&#x7ED3;&#x679C;" class="headerlink" title="7. &#x6D4B;&#x8BD5;&#x7ED3;&#x679C;"></a>7. &#x6D4B;&#x8BD5;&#x7ED3;&#x679C;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-后记"><span class="nav-number">8.</span> <span class="nav-text"><a href="#8-&#x540E;&#x8BB0;" class="headerlink" title="8. &#x540E;&#x8BB0;"></a>8. &#x540E;&#x8BB0;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x524D;&#x8A00;" class="headerlink" title="&#x524D;&#x8A00;"></a>&#x524D;&#x8A00;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验要求"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x8981;&#x6C42;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x8981;&#x6C42;"></a>&#x5B9E;&#x9A8C;&#x8981;&#x6C42;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验一要求"><span class="nav-number">2.1.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x4E00;&#x8981;&#x6C42;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x4E00;&#x8981;&#x6C42;"></a>&#x5B9E;&#x9A8C;&#x4E00;&#x8981;&#x6C42;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验二要求"><span class="nav-number">2.2.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x4E8C;&#x8981;&#x6C42;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x4E8C;&#x8981;&#x6C42;"></a>&#x5B9E;&#x9A8C;&#x4E8C;&#x8981;&#x6C42;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验环境"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x73AF;&#x5883;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x73AF;&#x5883;"></a>&#x5B9E;&#x9A8C;&#x73AF;&#x5883;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验源文件详解"><span class="nav-number">4.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x6E90;&#x6587;&#x4EF6;&#x8BE6;&#x89E3;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x6E90;&#x6587;&#x4EF6;&#x8BE6;&#x89E3;"></a>&#x5B9E;&#x9A8C;&#x6E90;&#x6587;&#x4EF6;&#x8BE6;&#x89E3;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cachelab-c"><span class="nav-number">4.1.</span> <span class="nav-text"><a href="#cachelab-c" class="headerlink" title="cachelab.c"></a>cachelab.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cachelab-h"><span class="nav-number">4.2.</span> <span class="nav-text"><a href="#cachelab-h" class="headerlink" title="cachelab.h"></a>cachelab.h</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#csim-c"><span class="nav-number">4.3.</span> <span class="nav-text"><a href="#csim-c" class="headerlink" title="csim.c"></a>csim.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trans-c"><span class="nav-number">4.4.</span> <span class="nav-text"><a href="#trans-c" class="headerlink" title="trans.c"></a>trans.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tracegen-c"><span class="nav-number">4.5.</span> <span class="nav-text"><a href="#tracegen-c" class="headerlink" title="tracegen.c"></a>tracegen.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#test-trans-c"><span class="nav-number">4.6.</span> <span class="nav-text"><a href="#test-trans-c" class="headerlink" title="test-trans.c"></a>test-trans.c</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序执行流程"><span class="nav-number">5.</span> <span class="nav-text"><a href="#&#x7A0B;&#x5E8F;&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="&#x7A0B;&#x5E8F;&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>&#x7A0B;&#x5E8F;&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验一执行流程"><span class="nav-number">5.1.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x4E00;&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x4E00;&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>&#x5B9E;&#x9A8C;&#x4E00;&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验二执行流程"><span class="nav-number">5.2.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x4E8C;&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x4E8C;&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>&#x5B9E;&#x9A8C;&#x4E8C;&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#driver-py执行流程"><span class="nav-number">5.3.</span> <span class="nav-text"><a href="#driver-py&#x6267;&#x884C;&#x6D41;&#x7A0B;" class="headerlink" title="driver.py&#x6267;&#x884C;&#x6D41;&#x7A0B;"></a>driver.py&#x6267;&#x884C;&#x6D41;&#x7A0B;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验思路"><span class="nav-number">6.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x601D;&#x8DEF;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x601D;&#x8DEF;"></a>&#x5B9E;&#x9A8C;&#x601D;&#x8DEF;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验一思路"><span class="nav-number">6.1.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x4E00;&#x601D;&#x8DEF;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x4E00;&#x601D;&#x8DEF;"></a>&#x5B9E;&#x9A8C;&#x4E00;&#x601D;&#x8DEF;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验二思路"><span class="nav-number">6.2.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9A8C;&#x4E8C;&#x601D;&#x8DEF;" class="headerlink" title="&#x5B9E;&#x9A8C;&#x4E8C;&#x601D;&#x8DEF;"></a>&#x5B9E;&#x9A8C;&#x4E8C;&#x601D;&#x8DEF;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试结果"><span class="nav-number">7.</span> <span class="nav-text"><a href="#&#x6D4B;&#x8BD5;&#x7ED3;&#x679C;" class="headerlink" title="&#x6D4B;&#x8BD5;&#x7ED3;&#x679C;"></a>&#x6D4B;&#x8BD5;&#x7ED3;&#x679C;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后记"><span class="nav-number">8.</span> <span class="nav-text"><a href="#&#x540E;&#x8BB0;" class="headerlink" title="&#x540E;&#x8BB0;"></a>&#x540E;&#x8BB0;</span></a></li></ol></div>
             
 
           </div>
