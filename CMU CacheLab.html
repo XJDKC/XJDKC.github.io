@@ -109,7 +109,7 @@
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/Exp2_4.png">
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/Exp2_5.png">
 <meta property="og:image" content="https://xjdkc.github.io/photo/CMU%20CacheLab/ExpTest.jpg">
-<meta property="og:updated_time" content="2019-05-16T17:29:45.262Z">
+<meta property="og:updated_time" content="2019-05-16T17:32:17.387Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CMU CacheLab">
 <meta name="twitter:description" content="前言　　最近做了一下CMU的CacheLab实验，感觉实验的整个C语言项目写得十分不错，以及实验考察内容十分有价值，特别是实验二中对64×64规模矩阵的优化令人称赞，加上好久没有更新博文了:cry:，于是想写一篇博文介绍一下，也方便日后回顾。本篇博文算是对与实验报告的归纳总结。">
@@ -429,7 +429,7 @@
              <i class="fa fa-calendar-o"></i>
            </span>
            <span class="post-meta-item-text">字数统计:</span>
-           <span class="post-count">6,732(字)</span>
+           <span class="post-count">6,733(字)</span>
            
          </span>
 	  
@@ -661,7 +661,7 @@
 <p>　　对于第二个不足之处，即如果存在A和B的数据存放在同一组的情况时，如果需要访问其中一个的数据就会造成替换，采取的解决办法是通过临时变量的方式进行中转。结合第一个不足之处的解决方案，只讨论8*8的情况，因为所有的转置都是按照8*8的大小重复进行的。在矩阵的行数以及列数一定的情况下，只有对角线上的元素才会存在在A、B对应位置的数据属于同一组的情况，因为对角线上数据不论按行优先还是列优先计算偏移，对于行数和列数一样的矩阵来说其偏移量都是一样的，所以需要对含有对角线元素的矩阵进行特殊处理。处理的方式是通过临时变量的方式，在转置的过程中，外层循环是8*8矩阵的行号，内层循环是8*8矩阵的列号，转置A的一行的时候，如果直接将A对角线上元素赋值给B的对角线上元素时，B的对应块就会把A的该行替换掉，然后在A之后的赋值中又得替换回来，所以采取的方式是用临时变量暂存A对角线元素，然后待该行循环结束之后再赋值给B的对应位置，这个时候B还是会替换掉A的该行，但是已经不影响了，因为A该行的其他变量都已经赋值给B对应的位置了。</p>
 <p>　　对于32*32和61*67的实现代码如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;N;i+=SQUARE_SIDE(N))</span><br><span class="line">    <span class="keyword">for</span> (j=<span class="number">0</span>;j&lt;M;j+=SQUARE_SIDE(N))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (k=i;k&lt;min(i+SQUARE_SIDE(N),N);k++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (l=<span class="number">0</span>;l&lt;min(SQUARE_SIDE(N),M-j);l++)</span><br><span class="line">                <span class="keyword">if</span> (k != j+l)</span><br><span class="line">                    B[j+l][k]=A[k][j+l];</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    temp[<span class="number">0</span>]=A[k][j+l];</span><br><span class="line">            <span class="keyword">if</span> (i==j)</span><br><span class="line">                B[k][k]=temp[<span class="number">0</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>　　对于32*32的测试，每一个8<em>8的缺失次数为(8+8)=16次，理想情况下不考虑与局部变量的冲突替换以及其他代码的数据访问总的缺失次数为16\</em>4*4=256，加上其他原因导致的数据访问缺失，预计缺失次数应小于300符合题目要求。<br>　　对于64*64的测试，按照之前的计算，应该按照4*4的大小对64*64的矩阵进行转置，但是这又出现了一个新的问题，即由于每次只使用了A的一块中的4个整型变量，那么在第二次使用的时候就不得不重新加载新的整型变量了，同理每次只存放了4列B值，那么同一块中还有4个整型变量没有被赋值，所以下次使用的时候仍需要重新加载到Cache中，造成替换替换次数仍较多。<br>　　解决这个问题的方法就是用B的空间暂存A的数据，对于8*8的矩阵，将前4行A的数据全部赋值给B前4行的某些变量，这样之后就不用再次用到A的前4行了。然后用A的后四行以及B的前4行中暂存数据更新更新B的后4行并将B的前4行更新，但是要注意由于B的第i+4行会替换掉B的第i行，所以需要先将数据取出来并赋值成正确的值，然后再更新B的第i+4行，这样由于不会用到B的第i行了所以第i+4行替换第i行不会造成多余的替换。具体分为4步：</p>
+<p>　　对于32*32的测试，每一个8*8的缺失次数为(8+8)=16次，理想情况下不考虑与局部变量的冲突替换以及其他代码的数据访问总的缺失次数为16*4*4=256，加上其他原因导致的数据访问缺失，预计缺失次数应小于300符合题目要求。<br>　　对于64*64的测试，按照之前的计算，应该按照4*4的大小对64*64的矩阵进行转置，但是这又出现了一个新的问题，即由于每次只使用了A的一块中的4个整型变量，那么在第二次使用的时候就不得不重新加载新的整型变量了，同理每次只存放了4列B值，那么同一块中还有4个整型变量没有被赋值，所以下次使用的时候仍需要重新加载到Cache中，造成替换替换次数仍较多。<br>　　解决这个问题的方法就是用B的空间暂存A的数据，对于8*8的矩阵，将前4行A的数据全部赋值给B前4行的某些变量，这样之后就不用再次用到A的前4行了。然后用A的后四行以及B的前4行中暂存数据更新更新B的后4行并将B的前4行更新，但是要注意由于B的第i+4行会替换掉B的第i行，所以需要先将数据取出来并赋值成正确的值，然后再更新B的第i+4行，这样由于不会用到B的第i行了所以第i+4行替换第i行不会造成多余的替换。具体分为4步：</p>
 <ol>
 <li>将A左上角转置赋值给B左上角，将A右上角转置赋值给B右上角将A的右上角转置后并没有像之前那样直接赋值给B的左下角因为跨了4行访问B中元素会造成多余的替换，所以用B的右上角暂存，这样也不用再访问A了，完成后的状态图如图2.1所示。这一步会缺失8次，即A的前四行以及B的前四行数据访问的Cache缺失。</li>
 </ol>
